@@ -3,6 +3,12 @@
 *.lo
 *.o
 *.obj
+*.ipch
+*.pdb
+*.sdf
+Debug
+Release
+GeneratedFiles
 
 # Compiled Dynamic libraries
 *.so
