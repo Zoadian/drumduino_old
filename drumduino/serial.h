@@ -17,5 +17,6 @@ public:
 public:
 	size_t available();
 	size_t readBytes(byte* data, size_t size);
+	size_t write(const byte* data, size_t size);
 };
 

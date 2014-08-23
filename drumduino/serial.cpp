@@ -56,9 +56,20 @@ size_t Serial::available()
 size_t Serial::readBytes(byte* data, size_t size)
 {
 	auto len = std::min(size, available());
-	
+
 	DWORD bytesRead;
 	::ReadFile(_hSerial, data, len, &bytesRead, NULL);
 
 	return bytesRead;
+}
+
+size_t Serial::write(const byte* data, size_t size)
+{
+	DWORD bytesSend;
+
+	if(!WriteFile(_hSerial, (void*)data, size, &bytesSend, 0)) {
+		ClearCommError(_hSerial, &_errors, &_status);
+	}
+
+	return bytesSend;
 }
