@@ -9,7 +9,7 @@
 #include "qcustomplot.h"
 #include "settings.h"
 
-enum { BufferSize = 1024 };
+enum { BufferSize = 512 };
 
 enum State {
 	StateAwait,
@@ -18,6 +18,7 @@ enum State {
 };
 
 class DrumduinoThread;
+class Channel;
 
 struct DrumduinoProc {
 	uint64_t frameCounter;
@@ -55,6 +56,7 @@ public:
 
 private:
 	Ui::drumduinoClass ui;
+	std::array<Channel*, PORT_CNT* CHAN_CNT> _channels;
 
 	std::shared_ptr<Serial> _serial;
 	std::shared_ptr<MidiOut> _midiOut;
@@ -69,7 +71,44 @@ private:
 
 private:
 
+	bool eventFilter(QObject* o, QEvent* e)
+	{
+		auto dial = qobject_cast<QDial*>(o);
 
+		if(dial && e->type() == QEvent::Paint) {
+			QPaintEvent* paintEvent = static_cast<QPaintEvent*>(e);
+
+
+			QStylePainter p(dial);
+
+			QStyleOptionSlider option;
+
+			option.initFrom(dial);
+			option.minimum = dial->minimum();
+			option.maximum = dial->maximum();
+			option.sliderPosition = dial->value();
+			option.sliderValue = dial->value();
+			option.singleStep = dial->singleStep();
+			option.pageStep = dial->pageStep();
+			option.upsideDown = !dial->invertedAppearance();
+			option.notchTarget = 0;
+			option.dialWrapping = dial->wrapping();
+			option.subControls = QStyle::SC_All;
+			option.activeSubControls = QStyle::SC_None;
+
+			//option.subControls &= ~QStyle::SC_DialTickmarks;
+			//option.tickPosition = QSlider::TicksAbove;
+			option.tickPosition = QSlider::NoTicks;
+
+			option.tickInterval = dial->notchSize();
+
+			p.drawComplexControl(QStyle::CC_Dial, option);
+			p.drawText(dial->rect(), Qt::AlignCenter, QString::number(dial->value()));
+			return true;
+		}
+
+		return QMainWindow::eventFilter(o, e);
+	}
 
 
 #if 0

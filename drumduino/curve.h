@@ -1,14 +1,16 @@
 #pragma once
 
 
-inline byte calcCurve(Curve curve, int Value, int Form)
+#include "settings.h"
+
+inline byte calcCurve(CurveSettings curveSettings, int Value)
 {
 	int ret = 0;
 
 	float x = Value * 8.0;
-	float f = ((float)Form) / 64.0; //[1;127]->[0.;2.0]
+	float f = ((float)curveSettings.value) / 64.0; //[1;127]->[0.;2.0]
 
-	switch(curve) {
+	switch(curveSettings.type) {
 		//[0-1023]x[0-127]
 		case 0:
 			ret = x * f / 16.0;
@@ -34,6 +36,8 @@ inline byte calcCurve(Curve curve, int Value, int Form)
 			ret = (x + 0x20) * f / 16.0;
 
 	}
+
+	ret = ret * (curveSettings.factor / 127.0) + curveSettings.offset;
 
 	if(ret <= 0) { return 0; }
 

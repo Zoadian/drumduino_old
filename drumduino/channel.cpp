@@ -12,6 +12,8 @@ Channel::Channel(int channel, ChannelSettings& channelSettings, QWidget* parent)
 	, _curvePlot(new QCustomPlot(this))
 {
 	ui.setupUi(this);
+
+	_curvePlot->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
 	ui.layoutCurvePlot->addWidget(_curvePlot);
 
 	QStringList notes;
@@ -31,26 +33,33 @@ Channel::Channel(int channel, ChannelSettings& channelSettings, QWidget* parent)
 	_curvePlot->yAxis->setRange(0, 127);
 	_curvePlot->setMinimumHeight(60);
 
+	//auto thresoldCurve = _curvePlot->addGraph(_curvePlot->xAxis, _curvePlot->yAxis);
+	//thresoldCurve->setPen(QPen(Qt::red));
+
 	_curvePlot->axisRect()->setAutoMargins(QCP::msNone);
 	_curvePlot->axisRect()->setMargins(QMargins(1, 1, 1, 1));
 
-	ui.leName->setPlaceholderText("Channel " + QString::number(channel));
+	ui.leName->setPlaceholderText("Channel " + QString::number(channel + 1));
 
-	updateUi();
+	update();
 
-	connect(ui.cbSensor, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), [this](int index) {_channelSettings.type = (Type)index; updateUi(); });
+	connect(ui.cbSensor, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), [this](int index) {_channelSettings.type = (Type)index; update(); });
 
-	connect(ui.cbNote, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), [this](int index) {_channelSettings.note = index; updateUi(); });
+	connect(ui.cbNote, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), [this](int index) {_channelSettings.note = index; update(); });
 
-	connect(ui.dialThresold, &QDial::valueChanged, [this](int value) {_channelSettings.thresold = value; updateUi(); });
+	connect(ui.dialThresold, &QDial::valueChanged, [this](int value) {_channelSettings.thresold = value; update(); });
 
-	connect(ui.dialScanTime, &QDial::valueChanged, [this](int value) {_channelSettings.scanTime = value; updateUi(); });
+	connect(ui.dialScanTime, &QDial::valueChanged, [this](int value) {_channelSettings.scanTime = value; update(); });
 
-	connect(ui.dialMaskTime, &QDial::valueChanged, [this](int value) {_channelSettings.maskTime = value; updateUi(); });
+	connect(ui.dialMaskTime, &QDial::valueChanged, [this](int value) {_channelSettings.maskTime = value; update(); });
 
-	connect(ui.cbCurveType, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), [this](int index) { _channelSettings.curveType = (Curve)index; updateUi(); });
+	connect(ui.cbCurveType, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), [this](int index) { _channelSettings.curve.type = (Curve)index; update(); });
 
-	connect(ui.dialOffset, &QDial::valueChanged, [this](int value) {_channelSettings.curveValue = value; updateUi(); });
+	connect(ui.dialValue, &QDial::valueChanged, [this](int value) {_channelSettings.curve.value = value; update(); });
+
+	connect(ui.dialOffset, &QDial::valueChanged, [this](int value) {_channelSettings.curve.offset = value; update(); });
+
+	connect(ui.dialFactor, &QDial::valueChanged, [this](int value) {_channelSettings.curve.factor = value; update(); });
 
 }
 
@@ -59,34 +68,55 @@ Channel::~Channel()
 
 }
 
-void Channel::updateUi()
+void Channel::update()
 {
 	ui.cbSensor->setCurrentIndex(_channelSettings.type);
 
 	ui.cbNote->setCurrentIndex(_channelSettings.note);
 
-	ui.labelThresold->setText(QString::number(_channelSettings.thresold));
+	//ui.labelThresold->setText(QString::number(_channelSettings.thresold));
 	ui.dialThresold->setValue(_channelSettings.thresold);
 
-	ui.labelScanTime->setText(QString::number(_channelSettings.scanTime));
+	//ui.labelScanTime->setText(QString::number(_channelSettings.scanTime));
 	ui.dialScanTime->setValue(_channelSettings.scanTime);
 
-	ui.labelMaskTime->setText(QString::number(_channelSettings.maskTime));
+	//ui.labelMaskTime->setText(QString::number(_channelSettings.maskTime));
 	ui.dialMaskTime->setValue(_channelSettings.maskTime);
 
-	ui.cbCurveType->setCurrentIndex(_channelSettings.curveType);
+	ui.cbCurveType->setCurrentIndex(_channelSettings.curve.type);
 
-	ui.labelOffset->setText(QString::number(_channelSettings.curveValue));
-	ui.dialOffset->setValue(_channelSettings.curveValue);
+	//ui.labelValue->setText(QString::number(_channelSettings.curveValue));
+	ui.dialValue->setValue(_channelSettings.curve.value);
 
-	QVector<qreal> x(127);
-	QVector<qreal> y(127);
+	//ui.labelOffset->setText(QString::number(_channelSettings.curveOffset));
+	ui.dialOffset->setValue(_channelSettings.curve.offset);
 
-	for(auto i = 0; i < 127; ++i) {
-		x[i] = i;
-		y[i] = calcCurve(_channelSettings.curveType, i, _channelSettings.curveValue);
+	//ui.labelFactor->setText(QString::number(_channelSettings.curveFactor));
+	ui.dialFactor->setValue(_channelSettings.curve.factor);
+
+	{
+		QVector<qreal> x(128);
+		QVector<qreal> y(128);
+
+		for(auto i = 0; i < 128; ++i) {
+			x[i] = i;
+			y[i] = calcCurve(_channelSettings.curve, i) ;
+		}
+
+		_curvePlot->graph(0)->setData(x, y);
 	}
 
-	_curvePlot->graph(0)->setData(x, y);
+	//{
+	//  QVector<qreal> x(2);
+	//  QVector<qreal> y(2);
+	//
+	//  x[0] = 0;
+	//  x[1] = 127;
+	//  y[0] = _channelSettings.thresold;
+	//  y[1] = _channelSettings.thresold;
+
+	//  _curvePlot->graph(1)->setData(x, y);
+	//}
+
 	_curvePlot->replot();
 }

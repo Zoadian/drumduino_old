@@ -19,23 +19,34 @@ enum Curve {
 	eXTRA,
 };
 
+struct CurveSettings {
+	Curve type;
+	uint8_t value;
+	int8_t offset;
+	uint8_t factor;
+
+	CurveSettings()
+		: type(Normal)
+		, value(127)
+		, offset(0)
+		, factor(127)
+	{}
+};
+
 struct ChannelSettings {
 	Type type;
 	uint8_t note;
 	uint8_t thresold;
 	qint64 scanTime;
 	qint64 maskTime;
-	Curve curveType;
-	int curveValue;
+	CurveSettings curve;
 
 	ChannelSettings()
 		: type(TypeDisabled)
 		, note(35)
-		, thresold(70)
-		, scanTime(2)
-		, maskTime(5)
-		, curveType(Normal)
-		, curveValue(127)
+		, thresold(25)
+		, scanTime(4)
+		, maskTime(10)
 	{}
 };
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>112</width>
-    <height>559</height>
+    <width>144</width>
+    <height>492</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -80,57 +80,53 @@
       <string>Sensor</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
-      <item row="5" column="0">
-       <widget class="QDial" name="dialMaskTime">
+      <item row="1" column="0">
+       <widget class="QDial" name="dialThresold">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>50</width>
+          <height>50</height>
+         </size>
+        </property>
         <property name="maximum">
          <number>127</number>
         </property>
-       </widget>
-      </item>
-      <item row="1" column="0">
-       <widget class="QDial" name="dialThresold">
-        <property name="maximum">
-         <number>127</number>
+        <property name="notchTarget">
+         <double>8.000000000000000</double>
+        </property>
+        <property name="notchesVisible">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
       <item row="3" column="0">
        <widget class="QDial" name="dialScanTime">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>50</width>
+          <height>50</height>
+         </size>
+        </property>
         <property name="maximum">
          <number>127</number>
         </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QLabel" name="labelThresold">
-        <property name="text">
-         <string>50</string>
+        <property name="notchTarget">
+         <double>8.000000000000000</double>
         </property>
-        <property name="scaledContents">
-         <bool>false</bool>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="5" column="1">
-       <widget class="QLabel" name="labelMaskTime">
-        <property name="text">
-         <string>127</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1">
-       <widget class="QLabel" name="labelScanTime">
-        <property name="text">
-         <string>127</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        <property name="notchesVisible">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -147,17 +143,42 @@
       <item row="2" column="0">
        <widget class="QLabel" name="label_8">
         <property name="text">
-         <string>Scan Time</string>
+         <string>ScanTime</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
-      <item row="4" column="0">
+      <item row="3" column="1">
+       <widget class="QDial" name="dialMaskTime">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>50</width>
+          <height>50</height>
+         </size>
+        </property>
+        <property name="maximum">
+         <number>127</number>
+        </property>
+        <property name="notchTarget">
+         <double>8.000000000000000</double>
+        </property>
+        <property name="notchesVisible">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
        <widget class="QLabel" name="label_11">
         <property name="text">
-         <string>Mask Time</string>
+         <string>MaskTime</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -169,11 +190,8 @@
      <zorder>dialThresold</zorder>
      <zorder>label_8</zorder>
      <zorder>dialScanTime</zorder>
-     <zorder>label_11</zorder>
      <zorder>dialMaskTime</zorder>
-     <zorder>labelThresold</zorder>
-     <zorder>labelMaskTime</zorder>
-     <zorder>labelScanTime</zorder>
+     <zorder>label_11</zorder>
     </widget>
    </item>
    <item>
@@ -182,13 +200,56 @@
       <string>Curve</string>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
-      <item row="3" column="0">
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>Factor</string>
+      <item row="2" column="0">
+       <widget class="QDial" name="dialValue">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
+        <property name="maximumSize">
+         <size>
+          <width>50</width>
+          <height>50</height>
+         </size>
+        </property>
+        <property name="maximum">
+         <number>127</number>
+        </property>
+        <property name="notchTarget">
+         <double>8.000000000000000</double>
+        </property>
+        <property name="notchesVisible">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="0">
+       <widget class="QDial" name="dialOffset">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>50</width>
+          <height>50</height>
+         </size>
+        </property>
+        <property name="minimum">
+         <number>-127</number>
+        </property>
+        <property name="maximum">
+         <number>127</number>
+        </property>
+        <property name="notchTarget">
+         <double>16.000000000000000</double>
+        </property>
+        <property name="notchesVisible">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -221,50 +282,40 @@
         </item>
        </widget>
       </item>
-      <item row="2" column="1">
-       <widget class="QLabel" name="labelOffset">
-        <property name="text">
-         <string>127</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="1">
-       <widget class="QLabel" name="labelFactor">
-        <property name="text">
-         <string>127</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <widget class="QDial" name="dialOffset">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="maximum">
-         <number>127</number>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="0">
-       <widget class="QLabel" name="label">
+       <widget class="QLabel" name="label_3">
         <property name="text">
-         <string>Offset</string>
+         <string>Value</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
         </property>
        </widget>
       </item>
+      <item row="8" column="0" colspan="2">
+       <layout class="QVBoxLayout" name="layoutCurvePlot"/>
+      </item>
       <item row="4" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Y-Offset</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Y-Factor</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
        <widget class="QDial" name="dialFactor">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -272,23 +323,34 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="maximumSize">
+         <size>
+          <width>50</width>
+          <height>50</height>
+         </size>
+        </property>
+        <property name="minimum">
+         <number>0</number>
+        </property>
         <property name="maximum">
          <number>127</number>
         </property>
+        <property name="notchTarget">
+         <double>8.000000000000000</double>
+        </property>
+        <property name="notchesVisible">
+         <bool>true</bool>
+        </property>
        </widget>
-      </item>
-      <item row="5" column="0" colspan="2">
-       <layout class="QVBoxLayout" name="layoutCurvePlot"/>
       </item>
      </layout>
      <zorder>cbCurveType</zorder>
      <zorder>dialOffset</zorder>
+     <zorder>label_3</zorder>
+     <zorder>dialValue</zorder>
      <zorder>label</zorder>
-     <zorder>labelOffset</zorder>
-     <zorder>dialFactor</zorder>
      <zorder>label_2</zorder>
-     <zorder>labelFactor</zorder>
-     <zorder>verticalLayoutWidget</zorder>
+     <zorder>dialFactor</zorder>
     </widget>
    </item>
   </layout>

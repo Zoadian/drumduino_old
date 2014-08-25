@@ -16,13 +16,14 @@ private:
 	QCustomPlot* _curvePlot;
 
 public:
-	Channel(int channel, ChannelSettings& channelSettings, QWidget *parent = 0);
+	Channel(int channel, ChannelSettings& channelSettings, QWidget* parent = 0);
 	~Channel();
 
 private:
 	Ui::channel ui;
 
-	void updateUi();
+public:
+	void update();
 };
 
 #endif // CHANNEL_H

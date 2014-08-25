@@ -21,7 +21,7 @@ bool readNextFrame(std::shared_ptr<Serial>& serial, DrumduinoProc& proc)
 AGAIN:
 	auto available = serial->available();
 
-	if(available < 2 + PORT_CNT * CHAN_CNT) {
+	if(available < sizeof(byte) + sizeof(byte) + sizeof(unsigned long) + PORT_CNT * CHAN_CNT) {
 		return false;
 	}
 
@@ -34,6 +34,9 @@ AGAIN:
 
 	byte manufacturer;
 	serial->readBytes(&manufacturer, 1);
+
+	unsigned long time;
+	serial->readBytes((byte*)&time, sizeof(unsigned long));
 
 	auto& frame = proc.frameBuffer[proc.frameCounter % BufferSize];
 	serial->readBytes(frame.data(), frame.size());
@@ -152,6 +155,12 @@ Drumduino::Drumduino(QWidget* parent)
 			auto channel = port * CHAN_CNT + pin;
 			auto wgtChannel = new Channel(channel, _settings.channelSettings[channel], wgtPort);
 			wgtPort->layout()->addWidget(wgtChannel);
+			_channels[channel] = wgtChannel;
+
+			for(auto dial : wgtChannel->findChildren<QDial*>()) {
+				dial->installEventFilter(this);
+			}
+
 		}
 	}
 
@@ -160,6 +169,7 @@ Drumduino::Drumduino(QWidget* parent)
 		auto fileName = QFileDialog::getSaveFileName(this, "Save", 0, tr("drumduino (*.edrum)"));
 
 		QFile file(fileName);
+		file.open(QIODevice::WriteOnly);
 		file.write((const char*)&_settings, sizeof(_settings));
 		file.close();
 	});
@@ -168,8 +178,13 @@ Drumduino::Drumduino(QWidget* parent)
 	connect(ui.actionLoad, &QAction::triggered, [this]() {
 		auto fileName = QFileDialog::getOpenFileName(this, "Open", 0, tr("drumduino (*.edrum)"));
 		QFile file(fileName);
+		file.open(QIODevice::ReadOnly);
 		file.read((char*)&_settings, sizeof(_settings));
 		file.close();
+
+		for(auto& channel : _channels) {
+			channel->update();
+		}
 	});
 
 
