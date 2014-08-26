@@ -3,7 +3,7 @@
 
 #include "settings.h"
 
-inline byte calcCurve(CurveSettings curveSettings, int Value)
+inline byte calcCurve(const CurveSettings& curveSettings, int Value)
 {
 	int ret = 0;
 

@@ -97,7 +97,7 @@ STATE_AGAIN:
 							break;
 						}
 
-						midiNoteOn(midiOut, settings.midiChannel, channelSettings.note, maxValue);
+						midiNoteOn(midiOut, settings.midiChannel, channelSettings.note, calcCurve(channelSettings.curve, maxValue));
 						state = StateMask;
 						//fallthrough
 
@@ -128,19 +128,6 @@ Drumduino::Drumduino(QWidget* parent)
 	: QMainWindow(parent)
 {
 	ui.setupUi(this);
-
-	ui.cbPrescaler->setCurrentIndex(_settings.prescaler);
-	ui.sbThrottle->setValue(_settings.throttle);
-
-	connect(ui.cbPrescaler, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), [this](int index) {
-		_settings.prescaler = index;
-		sendSysexPrescalerThrottle(_serial, _settings.prescaler, _settings.throttle);
-	});
-
-	connect(ui.sbThrottle, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), [this](int value) {
-		_settings.throttle = value;
-		sendSysexPrescalerThrottle(_serial, _settings.prescaler, _settings.throttle);
-	});
 
 	// Setup Channel Settings
 	for(auto channel = 0; channel < PORT_CNT * CHAN_CNT; ++channel) {
@@ -218,6 +205,7 @@ Drumduino::Drumduino(QWidget* parent)
 			auto table = new QTableWidget(CHAN_CNT, 1, wgtPort);
 			table->horizontalHeader()->setStretchLastSection(true);
 			table->verticalHeader()->setMinimumHeight(100);
+			table->horizontalHeader()->setVisible(false);
 			wgtPort->layout()->addWidget(table);
 
 			for(auto pin = 0; pin < CHAN_CNT; ++pin) {
@@ -254,6 +242,8 @@ Drumduino::Drumduino(QWidget* parent)
 			for(auto i = 0; i < PORT_CNT * CHAN_CNT; ++i) {
 				if(plots[i]->isVisible()) {
 					auto channel = mapChannels(i);
+
+					plots[i]->yAxis->setLabel(QString(_settings.channelSettings[i].name));
 					plots[i]->xAxis->setRange(x.front(), x.back());
 
 					for(auto k = 0; k < BufferSize; ++k) {
@@ -271,171 +261,6 @@ Drumduino::Drumduino(QWidget* parent)
 		timer->start(1000 / 12);
 	}
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#if 0
-
-	return;
-
-
-
-	_startTime = QDateTime::currentMSecsSinceEpoch();
-
-	for(auto i = 0; i < 5; ++i) {
-		_settings.channelSettings[0].type = TypePiezo;
-	}
-
-	for(auto i = 0; i < PORT_CNT; ++i) {
-		ui.tabWidget->addTab(new PortTab(), "Port_" + QString::number(i));
-		auto tab = ui.tabWidget->widget(i);
-		auto table = tab->findChild<QTableWidget*>("tableWidget");
-		table->setRowCount(8);
-		table->setColumnCount(9);
-
-		QStringList headers;
-		headers << "type" << "note" << "threshold" << "scanTime" << "maskTime" << "CurveType" << "CurveValue" << "CurveForm" << "Graph";
-		table->setHorizontalHeaderLabels(headers);
-	}
-
-	for(auto channel = 0; channel < PORT_CNT * CHAN_CNT; ++channel) {
-
-		_settings.channelSettings[channel].note = 35 + channel;
-
-
-		auto tab = ui.tabWidget->widget(channel / 8);
-		auto table = tab->findChild<QTableWidget*>("tableWidget");
-		table->setRowHeight(channel % 8, 110);
-
-		_plots.push_back(new QCustomPlot(table));
-
-
-		auto valueGraph = _plots.back()->addGraph();
-		valueGraph->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ScatterShape::ssDisc, 3));
-
-		_plots.back()->xAxis->setRange(0, BufferSize);
-		_plots.back()->yAxis->setRange(0, 256);
-		_plots.back()->yAxis2->setRange(0, 2);
-		_plots.back()->yAxis2->setVisible(true);
-
-		auto stateGraph = _plots.back()->addGraph(_plots.back()->xAxis, _plots.back()->yAxis2);
-		stateGraph->setPen(QPen(Qt::red));
-		stateGraph->setLineStyle(QCPGraph::LineStyle::lsStepLeft);
-
-
-
-		auto wgtType = new QComboBox(table);
-		auto wgtNote = new QSpinBox(table);
-		auto wgtThreshold = new QSpinBox(table);
-		auto wgtScanTime = new QSpinBox(table);
-		auto wgtMaskTime = new QSpinBox(table);
-		auto wgtCurveType = new QComboBox(table);
-		auto wgtCurveValue = new QSpinBox(table);
-
-		QStringList types;
-		types << "Disabled" << "Piezo";
-		wgtType->addItems(types);
-
-		QStringList curveTypes;
-		curveTypes << "Normal" << "Exp" << "Log" << "Sigma" << "Flat" << "eXTRA",
-		           wgtCurveType->addItems(curveTypes);
-
-		auto curveForm = new QCustomPlot(table);
-		curveForm->addGraph();
-		curveForm->xAxis->setRange(0, 127);
-		curveForm->yAxis->setRange(0, 127);
-
-		table->setCellWidget(channel % 8, 0, wgtType);
-		table->setCellWidget(channel % 8, 1, wgtNote);
-		table->setCellWidget(channel % 8, 2, wgtThreshold);
-		table->setCellWidget(channel % 8, 3, wgtScanTime);
-		table->setCellWidget(channel % 8, 4, wgtMaskTime);
-		table->setCellWidget(channel % 8, 5, wgtCurveType);
-		table->setCellWidget(channel % 8, 6, wgtCurveValue);
-		table->setCellWidget(channel % 8, 7, curveForm);
-		table->setCellWidget(channel % 8, 8, _plots.back());
-
-
-
-		wgtType->setCurrentIndex(_settings.channelSettings[channel].type);
-		wgtNote->setValue(_settings.channelSettings[channel].note);
-		wgtThreshold->setValue(_settings.channelSettings[channel].threshold);
-		wgtScanTime->setValue(_settings.channelSettings[channel].scanTime);
-		wgtMaskTime->setValue(_settings.channelSettings[channel].maskTime);
-		wgtCurveType->setCurrentIndex(_settings.channelSettings[channel].curveType);
-		wgtCurveValue->setMaximum(256);
-		wgtCurveValue->setValue(_settings.channelSettings[channel].curveValue);
-
-		auto fnReplotCurveForm = [this, channel, curveForm]() {
-			QVector<qreal> x(127);
-			QVector<qreal> y(127);
-
-			for(auto i = 0; i < 127; ++i) {
-				x[i] = i;
-				y[i] = calcCurve(_settings.channelSettings[channel].curveType, i, _settings.channelSettings[channel].curveValue);
-			}
-
-			curveForm->graph(0)->setData(x, y);
-			curveForm->replot();
-		};
-		fnReplotCurveForm();
-
-
-		connect(wgtType, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), [this, channel](int i) mutable { _settings.channelSettings[channel].type = (Type)i; });
-		connect(wgtNote, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), [this, channel](int i) mutable { _settings.channelSettings[channel].note = i; });
-		connect(wgtThreshold, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), [this, channel](int i) mutable { _settings.channelSettings[channel].threshold = i; });
-		connect(wgtScanTime, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), [this, channel](int i) mutable { _settings.channelSettings[channel].scanTime = i; });
-		connect(wgtMaskTime, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), [this, channel](int i) mutable { _settings.channelSettings[channel].maskTime = i; });
-		connect(wgtCurveType, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), [this, channel, curveForm, fnReplotCurveForm](int v) mutable {
-			_settings.channelSettings[channel].curveType = (Curve)v;
-			fnReplotCurveForm();
-		});
-		connect(wgtCurveValue, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), [this, channel, fnReplotCurveForm](int i) mutable {
-			_settings.channelSettings[channel].curveValue = i;
-			fnReplotCurveForm();
-		});
-	}
-
-
-	_serial = std::make_shared<Serial>(L"COM3", 115200);
-	_midiOut = std::make_shared<MidiOut>(1);
-
-
-	_workerThread = new WorkerThread(this);
-	_workerThread->start();
-
-#if 0
-	{
-		QTimer* timer = new QTimer(this);
-		_lasttime = QDateTime::currentMSecsSinceEpoch();
-		connect(timer, &QTimer::timeout, this, &drumduino::serialRead);
-		timer->start(1);
-	}
-#endif
-
-	{
-		QTimer* timer = new QTimer(this);
-		connect(timer, &QTimer::timeout, this, &drumduino::updateGraph);
-		timer->start(1000 / 12);
-	}
-
-	ui.chkUpdateGraph->QCheckBox::setCheckState(_updateGraph ? Qt::Checked : Qt::Unchecked);
-	connect(ui.chkUpdateGraph, &QCheckBox::stateChanged, [this](int s) {
-		_updateGraph = s == Qt::Checked;
-	});
-
-#endif
 }
 
 Drumduino::~Drumduino()
@@ -443,169 +268,3 @@ Drumduino::~Drumduino()
 	_drumduinoThread->stop();
 	_drumduinoThread->wait();
 }
-
-
-
-
-#if 0
-
-void Drumduino::serialRead()
-{
-AGAIN:
-	auto available = _serial->available();
-
-	if(available < 1 + PORT_CNT * CHAN_CNT) {
-		return;
-	}
-
-	byte sentinel;
-	_serial->readBytes(&sentinel, 1);
-
-	if(sentinel != 0xff) {
-		goto AGAIN;
-	}
-
-	//now we have a full frame
-	std::array<byte, PORT_CNT* CHAN_CNT> frame;
-	_serial->readBytes(frame.data(), frame.size());
-
-	auto currentIndex = _currentFrame % BufferSize;
-	handleFrame(frame, currentIndex);
-
-
-	for(size_t i = 0; i < PORT_CNT * CHAN_CNT; ++i) {
-		_stateBuffer[i][currentIndex] = _states[i];
-		_maxVal[i] = std::max(_maxVal[i], frame[i]);
-	}
-
-	++_currentFrame;
-
-//	goto AGAIN;
-}
-
-
-
-void Drumduino::updateGraph()
-{
-	if(!_updateGraph) {
-		return;
-	}
-
-	auto currentIndex = _currentFrame % BufferSize;
-	QVector<qreal> x(BufferSize);
-	QVector<qreal> y(BufferSize);
-	QVector<qreal> s(BufferSize);
-
-	for(auto i = 0; i < BufferSize; ++i) {
-		x[i] = i;
-	}
-
-	for(auto i = 0; i < PORT_CNT * CHAN_CNT; ++i) {
-		_plots[i]->xAxis->setRange(x.front(), x.back());
-
-		//if(_plots[i]->isVisible()) {
-		for(auto k = 0; k < BufferSize; ++k) {
-			y[k] = _frameBuffer[i][k];
-			s[k] = _stateBuffer[i][k];
-		}
-
-		_plots[i]->graph(0)->setData(x, y);
-		_plots[i]->graph(1)->setData(x, s);
-
-		_plots[i]->replot();
-		//}
-	}
-}
-
-
-#endif
-
-#if 0
-
-void Drumduino::handleFrame(const std::array<byte, PORT_CNT* CHAN_CNT>& frame, const uint64_t currentIndex)
-{
-
-	auto fnMidiNoteOn = [this](size_t channel, byte newValue) {
-		const auto& channelSettings = _settings.channelSettings[channel];
-
-		auto note = channelSettings.note;
-		auto velocity = calcCurve(channelSettings.curveType, newValue / 2, channelSettings.curveValue);
-
-		byte data[] = {0x90 | channel, 0x7f & note , 0x7f & velocity };
-		std::vector<byte> message(sizeof(data));
-		memcpy(message.data(), data, message.size());
-
-		_midiOut->send(message);
-	};
-
-
-
-	for(auto channel = 0; channel < PORT_CNT * CHAN_CNT; ++channel) {
-		//const auto curTime = QDateTime::currentMSecsSinceEpoch();
-		const auto curTime = _currentFrame;
-		const auto newValue = frame[mapChannels(channel)];
-		auto& lastValue = _frameBuffer[channel][(currentIndex - 1) % BufferSize];
-		auto& nextValue = _frameBuffer[channel][currentIndex];
-
-		auto& state = _states[channel];
-		auto& triggerFrame = _triggers[channel];
-		auto& maxValue = _max[channel];
-
-		const auto& channelSettings = _settings.channelSettings[channel];
-
-		switch(channelSettings.type) {
-			case TypePiezo: {
-				switch(state) {
-					// In this state we wait for a signal to trigger
-					case StateAwait: {
-						if(newValue > lastValue + channelSettings.threshold) {
-							state = StateScan;
-							triggerFrame = curTime;
-							maxValue = newValue;
-
-							if(channelSettings.scanTime == 0) {
-								fnMidiNoteOn(channel, maxValue);
-							}
-						}
-
-						break;
-					}
-
-					// In this state we measure the value for the given time period to get the max value
-					case StateScan: {
-						if(curTime > triggerFrame + channelSettings.scanTime) {
-							if(channelSettings.scanTime != 0) {
-								fnMidiNoteOn(channel, maxValue);
-							}
-
-							state = StateMask;
-						}
-
-						else {
-							maxValue = std::max(newValue, maxValue);
-						}
-
-						break;
-					}
-
-					// In this state we do nothing to prevent retriggering
-					case StateMask: {
-						if(curTime > triggerFrame + channelSettings.scanTime + channelSettings.maskTime) {
-							state = StateAwait;
-						}
-
-						break;
-					}
-
-					default: {
-						state = StateAwait;
-					}
-				}
-
-				nextValue = newValue;
-			}
-		}
-	}
-}
-
-#endif

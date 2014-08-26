@@ -34,6 +34,7 @@ struct CurveSettings {
 };
 
 struct ChannelSettings {
+	QChar name[1024];
 	Type type;
 	uint8_t note;
 	uint8_t threshold;
@@ -47,18 +48,18 @@ struct ChannelSettings {
 		, threshold(25)
 		, scanTime(4)
 		, maskTime(10)
-	{}
+	{
+		memset(name, 0, sizeof(name));
+	}
 };
 
 struct Settings {
+	uint8_t version;
 	uint8_t midiChannel;
-	byte prescaler;
-	byte throttle;
 	ChannelSettings channelSettings[PORT_CNT* CHAN_CNT];
 
 	Settings()
-		: prescaler(2)
-		, throttle(1)
+		: version(1)
 		, midiChannel(1)
 	{
 	}

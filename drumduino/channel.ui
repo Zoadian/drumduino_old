@@ -94,6 +94,9 @@
           <height>50</height>
          </size>
         </property>
+        <property name="toolTip">
+         <string>if a sample is previous sample + threshold or more, note will be triggered</string>
+        </property>
         <property name="maximum">
          <number>127</number>
         </property>
@@ -119,6 +122,9 @@
           <height>50</height>
          </size>
         </property>
+        <property name="toolTip">
+         <string>How many samples to acquire when a hit is detected.  max value of thes samples will be used as velocity</string>
+        </property>
         <property name="maximum">
          <number>127</number>
         </property>
@@ -143,7 +149,7 @@
       <item row="2" column="0">
        <widget class="QLabel" name="label_8">
         <property name="text">
-         <string>ScanTime</string>
+         <string>Scan</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -164,6 +170,9 @@
           <height>50</height>
          </size>
         </property>
+        <property name="toolTip">
+         <string>how many samples will be ignored after a note was played.</string>
+        </property>
         <property name="maximum">
          <number>127</number>
         </property>
@@ -178,7 +187,7 @@
       <item row="2" column="1">
        <widget class="QLabel" name="label_11">
         <property name="text">
-         <string>MaskTime</string>
+         <string>Mask</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -213,6 +222,9 @@
           <width>50</width>
           <height>50</height>
          </size>
+        </property>
+        <property name="toolTip">
+         <string>change the shape of the curve</string>
         </property>
         <property name="maximum">
          <number>127</number>
@@ -285,7 +297,7 @@
       <item row="1" column="0">
        <widget class="QLabel" name="label_3">
         <property name="text">
-         <string>Form</string>
+         <string>Shape</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>

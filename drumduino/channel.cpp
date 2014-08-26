@@ -43,6 +43,14 @@ Channel::Channel(int channel, ChannelSettings& channelSettings, QWidget* parent)
 
 	update();
 
+	connect(ui.leName, &QLineEdit::editingFinished, [this]() {
+		auto name = ui.leName->text();
+		memset(_channelSettings.name, 0, sizeof(_channelSettings.name));
+		auto size = std::min((size_t)name.size() * sizeof(QChar), sizeof(_channelSettings.name) - 1);
+		memcpy(_channelSettings.name, name.data(), size);
+		update();
+	});
+
 	connect(ui.cbSensor, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), [this](int index) {_channelSettings.type = (Type)index; update(); });
 
 	connect(ui.cbNote, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), [this](int index) {_channelSettings.note = index; update(); });
@@ -70,6 +78,9 @@ Channel::~Channel()
 
 void Channel::update()
 {
+	QString name(_channelSettings.name);
+	ui.leName->setText(name);
+
 	ui.cbSensor->setCurrentIndex(_channelSettings.type);
 
 	ui.cbNote->setCurrentIndex(_channelSettings.note);
