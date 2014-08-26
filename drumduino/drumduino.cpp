@@ -80,7 +80,7 @@ void processFrame(std::shared_ptr<MidiOut>& midiOut, DrumduinoProc& proc, const 
 					case StateAwait: {
 STATE_AGAIN:
 
-						if(currentValue < lastValue + channelSettings.thresold) {
+						if(currentValue < lastValue + channelSettings.threshold) {
 							break;
 						}
 
@@ -305,7 +305,7 @@ Drumduino::Drumduino(QWidget* parent)
 		table->setColumnCount(9);
 
 		QStringList headers;
-		headers << "type" << "note" << "thresold" << "scanTime" << "maskTime" << "CurveType" << "CurveValue" << "CurveForm" << "Graph";
+		headers << "type" << "note" << "threshold" << "scanTime" << "maskTime" << "CurveType" << "CurveValue" << "CurveForm" << "Graph";
 		table->setHorizontalHeaderLabels(headers);
 	}
 
@@ -337,7 +337,7 @@ Drumduino::Drumduino(QWidget* parent)
 
 		auto wgtType = new QComboBox(table);
 		auto wgtNote = new QSpinBox(table);
-		auto wgtThresold = new QSpinBox(table);
+		auto wgtThreshold = new QSpinBox(table);
 		auto wgtScanTime = new QSpinBox(table);
 		auto wgtMaskTime = new QSpinBox(table);
 		auto wgtCurveType = new QComboBox(table);
@@ -358,7 +358,7 @@ Drumduino::Drumduino(QWidget* parent)
 
 		table->setCellWidget(channel % 8, 0, wgtType);
 		table->setCellWidget(channel % 8, 1, wgtNote);
-		table->setCellWidget(channel % 8, 2, wgtThresold);
+		table->setCellWidget(channel % 8, 2, wgtThreshold);
 		table->setCellWidget(channel % 8, 3, wgtScanTime);
 		table->setCellWidget(channel % 8, 4, wgtMaskTime);
 		table->setCellWidget(channel % 8, 5, wgtCurveType);
@@ -370,7 +370,7 @@ Drumduino::Drumduino(QWidget* parent)
 
 		wgtType->setCurrentIndex(_settings.channelSettings[channel].type);
 		wgtNote->setValue(_settings.channelSettings[channel].note);
-		wgtThresold->setValue(_settings.channelSettings[channel].thresold);
+		wgtThreshold->setValue(_settings.channelSettings[channel].threshold);
 		wgtScanTime->setValue(_settings.channelSettings[channel].scanTime);
 		wgtMaskTime->setValue(_settings.channelSettings[channel].maskTime);
 		wgtCurveType->setCurrentIndex(_settings.channelSettings[channel].curveType);
@@ -394,7 +394,7 @@ Drumduino::Drumduino(QWidget* parent)
 
 		connect(wgtType, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), [this, channel](int i) mutable { _settings.channelSettings[channel].type = (Type)i; });
 		connect(wgtNote, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), [this, channel](int i) mutable { _settings.channelSettings[channel].note = i; });
-		connect(wgtThresold, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), [this, channel](int i) mutable { _settings.channelSettings[channel].thresold = i; });
+		connect(wgtThreshold, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), [this, channel](int i) mutable { _settings.channelSettings[channel].threshold = i; });
 		connect(wgtScanTime, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), [this, channel](int i) mutable { _settings.channelSettings[channel].scanTime = i; });
 		connect(wgtMaskTime, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), [this, channel](int i) mutable { _settings.channelSettings[channel].maskTime = i; });
 		connect(wgtCurveType, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), [this, channel, curveForm, fnReplotCurveForm](int v) mutable {
@@ -558,7 +558,7 @@ void Drumduino::handleFrame(const std::array<byte, PORT_CNT* CHAN_CNT>& frame, c
 				switch(state) {
 					// In this state we wait for a signal to trigger
 					case StateAwait: {
-						if(newValue > lastValue + channelSettings.thresold) {
+						if(newValue > lastValue + channelSettings.threshold) {
 							state = StateScan;
 							triggerFrame = curTime;
 							maxValue = newValue;

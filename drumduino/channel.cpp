@@ -33,8 +33,8 @@ Channel::Channel(int channel, ChannelSettings& channelSettings, QWidget* parent)
 	_curvePlot->yAxis->setRange(0, 127);
 	_curvePlot->setMinimumHeight(60);
 
-	//auto thresoldCurve = _curvePlot->addGraph(_curvePlot->xAxis, _curvePlot->yAxis);
-	//thresoldCurve->setPen(QPen(Qt::red));
+	//auto thresholdCurve = _curvePlot->addGraph(_curvePlot->xAxis, _curvePlot->yAxis);
+	//thresholdCurve->setPen(QPen(Qt::red));
 
 	_curvePlot->axisRect()->setAutoMargins(QCP::msNone);
 	_curvePlot->axisRect()->setMargins(QMargins(1, 1, 1, 1));
@@ -47,7 +47,7 @@ Channel::Channel(int channel, ChannelSettings& channelSettings, QWidget* parent)
 
 	connect(ui.cbNote, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), [this](int index) {_channelSettings.note = index; update(); });
 
-	connect(ui.dialThresold, &QDial::valueChanged, [this](int value) {_channelSettings.thresold = value; update(); });
+	connect(ui.dialThreshold, &QDial::valueChanged, [this](int value) {_channelSettings.threshold = value; update(); });
 
 	connect(ui.dialScanTime, &QDial::valueChanged, [this](int value) {_channelSettings.scanTime = value; update(); });
 
@@ -74,8 +74,8 @@ void Channel::update()
 
 	ui.cbNote->setCurrentIndex(_channelSettings.note);
 
-	//ui.labelThresold->setText(QString::number(_channelSettings.thresold));
-	ui.dialThresold->setValue(_channelSettings.thresold);
+	//ui.labelThreshold->setText(QString::number(_channelSettings.threshold));
+	ui.dialThreshold->setValue(_channelSettings.threshold);
 
 	//ui.labelScanTime->setText(QString::number(_channelSettings.scanTime));
 	ui.dialScanTime->setValue(_channelSettings.scanTime);
@@ -112,8 +112,8 @@ void Channel::update()
 	//
 	//  x[0] = 0;
 	//  x[1] = 127;
-	//  y[0] = _channelSettings.thresold;
-	//  y[1] = _channelSettings.thresold;
+	//  y[0] = _channelSettings.threshold;
+	//  y[1] = _channelSettings.threshold;
 
 	//  _curvePlot->graph(1)->setData(x, y);
 	//}

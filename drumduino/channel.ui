@@ -81,7 +81,7 @@
      </property>
      <layout class="QGridLayout" name="gridLayout_3">
       <item row="1" column="0">
-       <widget class="QDial" name="dialThresold">
+       <widget class="QDial" name="dialThreshold">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -133,7 +133,7 @@
       <item row="0" column="0">
        <widget class="QLabel" name="label_21">
         <property name="text">
-         <string>Thresold</string>
+         <string>Threshold</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>
@@ -187,7 +187,7 @@
       </item>
      </layout>
      <zorder>label_21</zorder>
-     <zorder>dialThresold</zorder>
+     <zorder>dialThreshold</zorder>
      <zorder>label_8</zorder>
      <zorder>dialScanTime</zorder>
      <zorder>dialMaskTime</zorder>
@@ -285,7 +285,7 @@
       <item row="1" column="0">
        <widget class="QLabel" name="label_3">
         <property name="text">
-         <string>Value</string>
+         <string>Form</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignCenter</set>

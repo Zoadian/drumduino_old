@@ -36,7 +36,7 @@ struct CurveSettings {
 struct ChannelSettings {
 	Type type;
 	uint8_t note;
-	uint8_t thresold;
+	uint8_t threshold;
 	qint64 scanTime;
 	qint64 maskTime;
 	CurveSettings curve;
@@ -44,7 +44,7 @@ struct ChannelSettings {
 	ChannelSettings()
 		: type(TypeDisabled)
 		, note(35)
-		, thresold(25)
+		, threshold(25)
 		, scanTime(4)
 		, maskTime(10)
 	{}
