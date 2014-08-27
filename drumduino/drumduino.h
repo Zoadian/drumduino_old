@@ -9,7 +9,7 @@
 #include "qcustomplot.h"
 #include "settings.h"
 
-enum { BufferSize = 512 };
+enum { BufferSize = 1024 };
 
 enum State {
 	StateAwait,
@@ -26,6 +26,7 @@ struct DrumduinoProc {
 	std::array<State, PORT_CNT* CHAN_CNT> states;
 	std::array<uint64_t, PORT_CNT* CHAN_CNT> triggers;
 	std::array<byte, PORT_CNT* CHAN_CNT> maxs;
+	std::array<uint64_t, PORT_CNT* CHAN_CNT> sums;
 
 	std::array<std::array<State, PORT_CNT* CHAN_CNT>, BufferSize>  stateBuffer;
 
@@ -78,9 +79,7 @@ private:
 		if(dial && e->type() == QEvent::Paint) {
 			QPaintEvent* paintEvent = static_cast<QPaintEvent*>(e);
 
-
 			QStylePainter p(dial);
-
 			QStyleOptionSlider option;
 
 			option.initFrom(dial);
@@ -101,8 +100,11 @@ private:
 			option.tickPosition = QSlider::NoTicks;
 
 			option.tickInterval = dial->notchSize();
-
+/*
+			p.setPen(qApp->palette().buttonText().color());
+			p.setBrush(qApp->palette().buttonText().color());*/
 			p.drawComplexControl(QStyle::CC_Dial, option);
+			p.setPen(qApp->palette().buttonText().color());
 			p.drawText(dial->rect(), Qt::AlignCenter, QString::number(dial->value()));
 			return true;
 		}
@@ -110,36 +112,12 @@ private:
 		return QMainWindow::eventFilter(o, e);
 	}
 
+signals:
+	void updateChannelProgess(size_t channel, byte maxValue, byte sumValue, byte calcValue);
 
-#if 0
+public slots:
+	void slotUpdateChannelProgress(size_t channel, byte maxValue, byte sumValue, byte calcValue);
 
-public:
-	std::vector<QCustomPlot*> _plots;
-
-	bool _updateGraph;
-	qint64 _lasttime;
-	qint64 _startTime;
-
-private:
-
-	uint64_t _currentFrame;
-	std::array<std::array<byte, BufferSize>, PORT_CNT* CHAN_CNT> _frameBuffer;
-	std::array<std::array<State, BufferSize>, PORT_CNT* CHAN_CNT> _stateBuffer;
-	std::array<State, PORT_CNT* CHAN_CNT> _states;
-	std::array<uint64_t, PORT_CNT* CHAN_CNT> _triggers;
-	std::array<byte, PORT_CNT* CHAN_CNT> _max;
-
-
-	std::array<byte, PORT_CNT* CHAN_CNT> _maxVal;
-
-public:
-
-
-
-	void serialRead();
-	void updateGraph();
-	void handleFrame(const std::array<byte, PORT_CNT* CHAN_CNT>& frame, const uint64_t currentIndex);
-#endif
 };
 
 

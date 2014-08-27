@@ -13,7 +13,27 @@ Channel::Channel(int channel, ChannelSettings& channelSettings, QWidget* parent)
 {
 	ui.setupUi(this);
 
+	//QPalette::ColorRole
+	ui.dialFactor->setBackgroundRole(QPalette::ColorRole::Highlight);
+	//ui.dialFactor->setPalette(qApp->palette());
+
+	QGraphicsDropShadowEffect* effect = new QGraphicsDropShadowEffect();
+	effect->setBlurRadius(30);
+	effect->setOffset(0, 0);
+	ui.btnSumScan->setGraphicsEffect(effect);
+
 	_curvePlot->setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::MinimumExpanding);
+	_curvePlot->setBackground(qApp->palette().button());
+	QPen pen(qApp->palette().midlight().color());
+	pen.setStyle(Qt::PenStyle::DotLine);
+	_curvePlot->xAxis->grid()->setPen(pen);
+	_curvePlot->yAxis->grid()->setPen(pen);
+	_curvePlot->xAxis2->grid()->setPen(pen);
+	_curvePlot->yAxis2->grid()->setPen(pen);
+	_curvePlot->xAxis->setTicks(false);
+	_curvePlot->yAxis->setTicks(false);
+	_curvePlot->xAxis2->setTicks(false);
+	_curvePlot->yAxis2->setTicks(false);
 	ui.layoutCurvePlot->addWidget(_curvePlot);
 
 	QStringList notes;
@@ -25,10 +45,12 @@ Channel::Channel(int channel, ChannelSettings& channelSettings, QWidget* parent)
 		oktaves << QString::number(int(i / 12) - 1) + " " + notes[i % 12] + "";
 	}
 
+
 	ui.cbNote->clear();
 	ui.cbNote->addItems(oktaves);
 
-	_curvePlot->addGraph();
+	auto curve = _curvePlot->addGraph();
+	curve->setPen(QPen(qApp->palette().buttonText().color()));
 	_curvePlot->xAxis->setRange(0, 127);
 	_curvePlot->yAxis->setRange(0, 127);
 	_curvePlot->setMinimumHeight(60);
@@ -56,6 +78,8 @@ Channel::Channel(int channel, ChannelSettings& channelSettings, QWidget* parent)
 	connect(ui.cbNote, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), [this](int index) {_channelSettings.note = index; update(); });
 
 	connect(ui.dialThreshold, &QDial::valueChanged, [this](int value) {_channelSettings.threshold = value; update(); });
+
+	connect(ui.btnSumScan, &QPushButton::toggled, [this](bool checked) {_channelSettings.sum = checked; update(); });
 
 	connect(ui.dialScanTime, &QDial::valueChanged, [this](int value) {_channelSettings.scanTime = value; update(); });
 
@@ -85,25 +109,31 @@ void Channel::update()
 
 	ui.cbNote->setCurrentIndex(_channelSettings.note);
 
-	//ui.labelThreshold->setText(QString::number(_channelSettings.threshold));
 	ui.dialThreshold->setValue(_channelSettings.threshold);
 
-	//ui.labelScanTime->setText(QString::number(_channelSettings.scanTime));
+	ui.btnSumScan->setChecked(_channelSettings.sum);
+
 	ui.dialScanTime->setValue(_channelSettings.scanTime);
 
-	//ui.labelMaskTime->setText(QString::number(_channelSettings.maskTime));
 	ui.dialMaskTime->setValue(_channelSettings.maskTime);
 
 	ui.cbCurveType->setCurrentIndex(_channelSettings.curve.type);
 
-	//ui.labelValue->setText(QString::number(_channelSettings.curveValue));
 	ui.dialValue->setValue(_channelSettings.curve.value);
 
-	//ui.labelOffset->setText(QString::number(_channelSettings.curveOffset));
 	ui.dialOffset->setValue(_channelSettings.curve.offset);
 
-	//ui.labelFactor->setText(QString::number(_channelSettings.curveFactor));
 	ui.dialFactor->setValue(_channelSettings.curve.factor);
+
+	auto effect = static_cast<QGraphicsDropShadowEffect*>(ui.btnSumScan->graphicsEffect());
+
+	if(_channelSettings.sum) {
+		effect->setColor(QColor(0xff9966));
+	}
+
+	else {
+		effect->setColor(QColor(0, 0, 0, 0));
+	}
 
 	{
 		QVector<qreal> x(128);

@@ -41,13 +41,15 @@ struct ChannelSettings {
 	qint64 scanTime;
 	qint64 maskTime;
 	CurveSettings curve;
+	bool sum;
 
 	ChannelSettings()
 		: type(TypeDisabled)
 		, note(35)
 		, threshold(25)
-		, scanTime(4)
-		, maskTime(10)
+		, scanTime(25)
+		, maskTime(35)
+		, sum(false)
 	{
 		memset(name, 0, sizeof(name));
 	}

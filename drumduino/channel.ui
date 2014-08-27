@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>144</width>
-    <height>492</height>
+    <height>626</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -76,10 +76,19 @@
    </item>
    <item>
     <widget class="QGroupBox" name="groupBox">
+     <property name="layoutDirection">
+      <enum>Qt::LeftToRight</enum>
+     </property>
      <property name="title">
       <string>Sensor</string>
      </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
      <layout class="QGridLayout" name="gridLayout_3">
+      <property name="sizeConstraint">
+       <enum>QLayout::SetDefaultConstraint</enum>
+      </property>
       <item row="1" column="0">
        <widget class="QDial" name="dialThreshold">
         <property name="sizePolicy">
@@ -108,7 +117,17 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="0">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label_21">
+        <property name="text">
+         <string>Threshold</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
        <widget class="QDial" name="dialScanTime">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -136,16 +155,6 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_21">
-        <property name="text">
-         <string>Threshold</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-      </item>
       <item row="2" column="0">
        <widget class="QLabel" name="label_8">
         <property name="text">
@@ -156,7 +165,23 @@
         </property>
        </widget>
       </item>
-      <item row="3" column="1">
+      <item row="2" column="1">
+       <widget class="QLabel" name="label_11">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="text">
+         <string>Mask</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
        <widget class="QDial" name="dialMaskTime">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -173,6 +198,9 @@
         <property name="toolTip">
          <string>how many samples will be ignored after a note was played.</string>
         </property>
+        <property name="layoutDirection">
+         <enum>Qt::LeftToRight</enum>
+        </property>
         <property name="maximum">
          <number>127</number>
         </property>
@@ -184,33 +212,8 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="1">
-       <widget class="QLabel" name="label_11">
-        <property name="text">
-         <string>Mask</string>
-        </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
-        </property>
-       </widget>
-      </item>
-     </layout>
-     <zorder>label_21</zorder>
-     <zorder>dialThreshold</zorder>
-     <zorder>label_8</zorder>
-     <zorder>dialScanTime</zorder>
-     <zorder>dialMaskTime</zorder>
-     <zorder>label_11</zorder>
-    </widget>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="groupBox_2">
-     <property name="title">
-      <string>Curve</string>
-     </property>
-     <layout class="QGridLayout" name="gridLayout_2">
-      <item row="2" column="0">
-       <widget class="QDial" name="dialValue">
+      <item row="1" column="1">
+       <widget class="QPushButton" name="btnSumScan">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
           <horstretch>0</horstretch>
@@ -223,8 +226,79 @@
           <height>50</height>
          </size>
         </property>
-        <property name="toolTip">
-         <string>change the shape of the curve</string>
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+          <weight>50</weight>
+          <bold>false</bold>
+         </font>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QPushButton { margin:9px 6px 9px 6px;  padding-bottom:2px; } QPushButton:checked {  background-color: #ff9966; }</string>
+        </property>
+        <property name="text">
+         <string>∑</string>
+        </property>
+        <property name="checkable">
+         <bool>true</bool>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
+        </property>
+        <property name="autoExclusive">
+         <bool>false</bool>
+        </property>
+        <property name="flat">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>Sum</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
+     <zorder>label_21</zorder>
+     <zorder>dialThreshold</zorder>
+     <zorder>label_8</zorder>
+     <zorder>dialScanTime</zorder>
+     <zorder>label_11</zorder>
+     <zorder>btnSumScan</zorder>
+     <zorder>dialMaskTime</zorder>
+     <zorder>label_4</zorder>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
+      <string>Curve Form</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <item row="5" column="1">
+       <widget class="QDial" name="dialFactor">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>50</width>
+          <height>50</height>
+         </size>
+        </property>
+        <property name="minimum">
+         <number>0</number>
         </property>
         <property name="maximum">
          <number>127</number>
@@ -304,16 +378,31 @@
         </property>
        </widget>
       </item>
-      <item row="8" column="0" colspan="2">
-       <layout class="QVBoxLayout" name="layoutCurvePlot"/>
-      </item>
-      <item row="4" column="0">
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>Y-Offset</string>
+      <item row="2" column="0">
+       <widget class="QDial" name="dialValue">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
         </property>
-        <property name="alignment">
-         <set>Qt::AlignCenter</set>
+        <property name="maximumSize">
+         <size>
+          <width>50</width>
+          <height>50</height>
+         </size>
+        </property>
+        <property name="toolTip">
+         <string>change the shape of the curve</string>
+        </property>
+        <property name="maximum">
+         <number>127</number>
+        </property>
+        <property name="notchTarget">
+         <double>8.000000000000000</double>
+        </property>
+        <property name="notchesVisible">
+         <bool>true</bool>
         </property>
        </widget>
       </item>
@@ -327,33 +416,18 @@
         </property>
        </widget>
       </item>
-      <item row="5" column="1">
-       <widget class="QDial" name="dialFactor">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
+      <item row="4" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Y-Offset</string>
         </property>
-        <property name="maximumSize">
-         <size>
-          <width>50</width>
-          <height>50</height>
-         </size>
-        </property>
-        <property name="minimum">
-         <number>0</number>
-        </property>
-        <property name="maximum">
-         <number>127</number>
-        </property>
-        <property name="notchTarget">
-         <double>8.000000000000000</double>
-        </property>
-        <property name="notchesVisible">
-         <bool>true</bool>
+        <property name="alignment">
+         <set>Qt::AlignCenter</set>
         </property>
        </widget>
+      </item>
+      <item row="8" column="0" colspan="2">
+       <layout class="QVBoxLayout" name="layoutCurvePlot"/>
       </item>
      </layout>
      <zorder>cbCurveType</zorder>
@@ -363,6 +437,67 @@
      <zorder>label</zorder>
      <zorder>label_2</zorder>
      <zorder>dialFactor</zorder>
+     <zorder></zorder>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_3">
+     <property name="alignment">
+      <set>Qt::AlignCenter</set>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QProgressBar" name="pbMax">
+        <property name="maximum">
+         <number>127</number>
+        </property>
+        <property name="value">
+         <number>24</number>
+        </property>
+        <property name="textVisible">
+         <bool>false</bool>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QProgressBar" name="pbSum">
+        <property name="maximum">
+         <number>127</number>
+        </property>
+        <property name="value">
+         <number>24</number>
+        </property>
+        <property name="textVisible">
+         <bool>false</bool>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QProgressBar" name="pbOut">
+        <property name="styleSheet">
+         <string notr="true"/>
+        </property>
+        <property name="maximum">
+         <number>127</number>
+        </property>
+        <property name="value">
+         <number>24</number>
+        </property>
+        <property name="textVisible">
+         <bool>false</bool>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
   </layout>

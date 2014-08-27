@@ -24,6 +24,13 @@ private:
 
 public:
 	void update();
+
+	void triggered(byte maxValue, byte sumValue, byte calcValue)
+	{
+		ui.pbMax->setValue(maxValue);
+		ui.pbSum->setValue(sumValue);
+		ui.pbOut->setValue(calcValue);
+	}
 };
 
 #endif // CHANNEL_H
